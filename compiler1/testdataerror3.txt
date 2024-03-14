@@ -1,0 +1,4 @@
+The quick brown fox jumps over the lazy dog.
+Excuse me, do you have a minute?
+I love programming in C/C++!
+What's your favorite programming language? Python? Java? C#?
