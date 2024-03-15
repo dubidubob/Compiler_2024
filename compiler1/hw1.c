@@ -1,13 +1,13 @@
 /*********************************************************************
 *Programmer : 김지원(2176100), 채민주(2076405), 주소연(2076397), 김현민(2071020)
 * Date : 3/ 15/ 2024
-* Description: 
-    + identifier만을 이해하는 lexical analyzer이라고 가정하는 기능. 
+* Description:
+    + identifier만을 이해하는 lexical analyzer이라고 가정하는 기능.
     + 텍스트 문서에서 identifier를 HS Table에 저장, 출력하는 스크립트입니다.
-    + identifier: 영문자(a~z, A~Z), 특수기후(_)와 숫자(0~9)로 이루어진 단어입니다. 이때 숫자는 처음에 올 수 없습니다.
-    + seperators: 각 identifier는 seperators에 의해 구분됩니다. 
-* Input: 
-    + 해당 스크립트 동일 폴더에 identifier를 추출할 "*.txt" 문서. 
+    + identifier: 영문자(a~z, A~Z), 특수기호(_)와 숫자(0~9)로 이루어진 단어입니다. 이때 숫자는 처음에 올 수 없습니다.
+    + seperators: 각 identifier는 seperators에 의해 구분됩니다.
+* Input:
+    + 해당 스크립트 동일 폴더에 identifier를 추출할 "*.txt" 문서.
     + 이때 해당 문서명을 FILE_NAME에 define 해주시면 됩니다.(기본: "testdata1.txt")
 * Output:
     + 각 identifier의 test data Table을 출력합니다.
@@ -15,7 +15,7 @@
     + 에러가 생겼을 시 에러 메시지를 출력합니다.(함수: PrintError)
 * Restriction:
     + ST이 overflow될 때, 해당 문자를 제외하고 Hash Table이 출력됩니다.
-* Global variables:    
+* Global variables:
     + char[] ST : 들어오는 string(identifier)의 table
     + HTpointer[] HT : HashTable(구조체 HTentry)의 head pointer 배열
     + int nextid: ST에서 현재 identifier의 첫 인덱스
@@ -31,7 +31,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h> 
-#include <string.h>
+
 #define FILE_NAME "testdata1.txt"
 #define STsize 1000 // ST 사이즈
 #define HTsize 100 // HT 사이즈
@@ -45,7 +45,6 @@ typedef struct HTentry* HTpointer;
 typedef struct HTentry {
     int index; // ST안에 있는 identifier의 인덱스
     HTpointer next; // 다음 identifier를 가리키는 포인터
-
 }HTentry;
 
 enum errorTypes { noerror, illsp, illid, overst, toolong }; // 에러X, 잘못된 공백, 잘못된 식별자, 스택오버플로우, 너무긴 식별자
