@@ -1,10 +1,38 @@
+/*********************************************************************
+*Programmer : 김지원(2176100), 채민주(2076405), 주소연(2076397), 김현민(2071020)
+* Date : 3/ 15/ 2024
+* Description: 
+    + identifier만을 이해하는 lexical analyzer이라고 가정하는 기능. 
+    + 텍스트 문서에서 identifier를 HS Table에 저장, 출력하는 스크립트입니다.
+    + identifier: 영문자(a~z, A~Z), 특수기후(_)와 숫자(0~9)로 이루어진 단어입니다. 이때 숫자는 처음에 올 수 없습니다.
+    + seperators: 각 identifier는 seperators에 의해 구분됩니다. 
+* Input: 
+    + 해당 스크립트 동일 폴더에 identifier를 추출할 "*.txt" 문서. 
+    + 이때 해당 문서명을 FILE_NAME에 define 해주시면 됩니다.(기본: "testdata1.txt")
+* Output:
+    + 각 identifier의 test data Table을 출력합니다.
+    + Hash Code와 그에 해당되는 identifier를 보여주는 Hash Table을 출력합니다.
+    + 에러가 생겼을 시 에러 메시지를 출력합니다.(함수: PrintError)
+* Restriction:
+    + ST이 overflow될 때, 해당 문자를 제외하고 Hash Table이 출력됩니다.
+* Global variables:    
+    + char[] ST : 들어오는 string(identifier)의 table
+    + HTpointer[] HT : HashTable(구조체 HTentry)의 head pointer 배열
+    + int nextid: ST에서 현재 identifier의 첫 인덱스
+    + int nextfree: ST에서 현재 identifier와 다음 identifier의 사이 인덱스
+    + int sameid: ST에서 중복 identifier의 인덱스
+    + int found: 중복 identifier 체크용 변수
+    + seperator[] : 배열 안 문자들이 sperator, ".,;:?!\t\n "
+    */
+
+
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h> 
 #include <string.h>
-#define FILE_NAME "testdatanoerror2.txt"
+#define FILE_NAME "testdata1.txt"
 #define STsize 1000 // ST 사이즈
 #define HTsize 100 // HT 사이즈
 #define FALSE 0
@@ -26,12 +54,13 @@ typedef enum errorTypes ERRORtypes;
 char seperators[] = ".,;:?!\t\n ";
 
 HTpointer HT[HTsize];
+
 char ST[STsize];
 
 int nextid = 0; // 현재 identifier
 int nextfree = 0; // ST에서 다음 인덱스를 가리키는 identifier
 int hashcode; // identifier의 hashcode
-int sameid; // identifier의 첫번째 인덱스
+int sameid; // 중복된 identifier
 
 int found; // 이미 존재하는 식별자가 있는지 찾는 변수
 
@@ -43,13 +72,7 @@ int input;
 //Initialize - 파일 열기, 한 글자 읽기
 void initialize() {
     fp = fopen(FILE_NAME, "r");
-    if (fp == NULL) {
-        printf("Fail to open file...\n");
-        exit(0); // 파일 열기 실패 시 프로그램 종료
-    }
-
     input = fgetc(fp);
-
 }
 
 
@@ -74,8 +97,8 @@ void PrintHeading()
 {
     printf("\n\n");
     printf(" ----------------   ------------\n");
-    printf(" Index in ST     identifier \n");
-    printf(" ------------  ------------ \n");
+    printf(" Index in ST       identifier \n");
+    printf(" ------------   ------------ \n");
     printf("\n");
 
 }
@@ -106,6 +129,14 @@ void PrintHStable()
         }
     }
     printf("\n\n\n < %5d characters are used in the string table > \n ", nextfree);
+
+    printf("===========================================================\n");
+    printf("8조: 컴파일러 과제 1\n");
+    printf("2071020 김현민\n");
+    printf("2076020 주소연\n");
+    printf("2076405 채민주\n");
+    printf("2176100 김지원\n");
+    printf("===========================================================\n");
 
 }
 
@@ -293,6 +324,7 @@ void ADDHT(int hscode)
 }
 
 
+
 /*
 MAIN
     파일에서 identifier 하나를 한글자씩 읽어 ST에 삽입
@@ -385,6 +417,7 @@ int main()
                 }
             }
         }
+
     }
     PrintHStable();
 
