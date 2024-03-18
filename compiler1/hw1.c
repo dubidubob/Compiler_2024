@@ -1,28 +1,29 @@
 /*********************************************************************
-*Programmer : ±èÁö¿ø(2176100), Ã¤¹ÎÁÖ(2076405), ÁÖ¼Ò¿¬(2076397), ±èÇö¹Î(2071020)
+*Programmer : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(2176100), Ã¤ï¿½ï¿½ï¿½ï¿½(2076405), ï¿½Ö¼Ò¿ï¿½(2076397), ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(2071020)
 * Date : 3/ 15/ 2024
 * Description: 
-    + identifier¸¸À» ÀÌÇØÇÏ´Â lexical analyzerÀÌ¶ó°í °¡Á¤ÇÏ´Â ±â´É. 
-    + ÅØ½ºÆ® ¹®¼­¿¡¼­ identifier¸¦ HS Table¿¡ ÀúÀå, Ãâ·ÂÇÏ´Â ½ºÅ©¸³Æ®ÀÔ´Ï´Ù.
-    + identifier: ¿µ¹®ÀÚ(a~z, A~Z), Æ¯¼ö±âÈÄ(_)¿Í ¼ýÀÚ(0~9)·Î ÀÌ·ç¾îÁø ´Ü¾îÀÔ´Ï´Ù. ÀÌ¶§ ¼ýÀÚ´Â Ã³À½¿¡ ¿Ã ¼ö ¾ø½À´Ï´Ù.
-    + seperators: °¢ identifier´Â seperators¿¡ ÀÇÇØ ±¸ºÐµË´Ï´Ù. 
+    + identifierï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ lexical analyzerï¿½Ì¶ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½. 
+    + ï¿½Ø½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ identifierï¿½ï¿½ HS Tableï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½Å©ï¿½ï¿½Æ®ï¿½Ô´Ï´ï¿½.
+    + identifier: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(a~z, A~Z), Æ¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(_)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(0~9)ï¿½ï¿½ ï¿½Ì·ï¿½ï¿½ï¿½ï¿½ ï¿½Ü¾ï¿½ï¿½Ô´Ï´ï¿½. ï¿½Ì¶ï¿½ ï¿½ï¿½ï¿½Ú´ï¿½ Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.
+    + seperators: ï¿½ï¿½ identifierï¿½ï¿½ seperatorsï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ÐµË´Ï´ï¿½. 
 * Input: 
-    + ÇØ´ç ½ºÅ©¸³Æ® µ¿ÀÏ Æú´õ¿¡ identifier¸¦ ÃßÃâÇÒ "*.txt" ¹®¼­. 
-    + ÀÌ¶§ ÇØ´ç ¹®¼­¸íÀ» FILE_NAME¿¡ define ÇØÁÖ½Ã¸é µË´Ï´Ù.(±âº»: "testdata1.txt")
+    + ï¿½Ø´ï¿½ ï¿½ï¿½Å©ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ identifierï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ "*.txt" ï¿½ï¿½ï¿½ï¿½. 
+    + ï¿½Ì¶ï¿½ ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ FILE_NAMEï¿½ï¿½ define ï¿½ï¿½ï¿½Ö½Ã¸ï¿½ ï¿½Ë´Ï´ï¿½.(ï¿½âº»: "testdata1.txt")
 * Output:
-    + °¢ identifierÀÇ test data TableÀ» Ãâ·ÂÇÕ´Ï´Ù.
-    + Hash Code¿Í ±×¿¡ ÇØ´çµÇ´Â identifier¸¦ º¸¿©ÁÖ´Â Hash TableÀ» Ãâ·ÂÇÕ´Ï´Ù.
-    + ¿¡·¯°¡ »ý°åÀ» ½Ã ¿¡·¯ ¸Þ½ÃÁö¸¦ Ãâ·ÂÇÕ´Ï´Ù.(ÇÔ¼ö: PrintError)
+    + ï¿½ï¿½ identifierï¿½ï¿½ test data Tableï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
+    + Hash Codeï¿½ï¿½ ï¿½×¿ï¿½ ï¿½Ø´ï¿½Ç´ï¿½ identifierï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ Hash Tableï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.
+    + ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Þ½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Õ´Ï´ï¿½.(ï¿½Ô¼ï¿½: PrintError)
 * Restriction:
-    + STÀÌ overflowµÉ ¶§, ÇØ´ç ¹®ÀÚ¸¦ Á¦¿ÜÇÏ°í Hash TableÀÌ Ãâ·ÂµË´Ï´Ù.
+    + %,@ ï¿½ï¿½ identifier, seperatorï¿½ï¿½ ï¿½ï¿½ï¿½Çµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½Ø½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ is not allowed Error Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½Ï°ï¿½ ST ï¿½ï¿½ï¿½Ìºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê½ï¿½ï¿½Ï´ï¿½.
+    + STï¿½ï¿½ overflowï¿½ï¿½ ï¿½ï¿½, ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½Ú¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ Hash Tableï¿½ï¿½ ï¿½ï¿½ÂµË´Ï´ï¿½.
 * Global variables:    
-    + char[] ST : µé¾î¿À´Â string(identifier)ÀÇ table
-    + HTpointer[] HT : HashTable(±¸Á¶Ã¼ HTentry)ÀÇ head pointer ¹è¿­
-    + int nextid: ST¿¡¼­ ÇöÀç identifierÀÇ Ã¹ ÀÎµ¦½º
-    + int nextfree: ST¿¡¼­ ÇöÀç identifier¿Í ´ÙÀ½ identifierÀÇ »çÀÌ ÀÎµ¦½º
-    + int sameid: ST¿¡¼­ Áßº¹ identifierÀÇ ÀÎµ¦½º
-    + int found: Áßº¹ identifier Ã¼Å©¿ë º¯¼ö
-    + seperator[] : ¹è¿­ ¾È ¹®ÀÚµéÀÌ sperator, ".,;:?!\t\n "
+    + char[] ST : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ string(identifier)ï¿½ï¿½ table
+    + HTpointer[] HT : HashTable(ï¿½ï¿½ï¿½ï¿½Ã¼ HTentry)ï¿½ï¿½ head pointer ï¿½è¿­
+    + int nextid: STï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ identifierï¿½ï¿½ Ã¹ ï¿½Îµï¿½ï¿½ï¿½
+    + int nextfree: STï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ identifierï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ identifierï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½
+    + int sameid: STï¿½ï¿½ï¿½ï¿½ ï¿½ßºï¿½ identifierï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½
+    + int found: ï¿½ßºï¿½ identifier Ã¼Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    + seperator[] : ï¿½è¿­ ï¿½ï¿½ ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ sperator, ".,;:?!\t\n "
     */
 
 
@@ -33,8 +34,8 @@
 #include <stdlib.h> 
 #include <string.h>
 #define FILE_NAME "testdata1.txt"
-#define STsize 1000 // ST »çÀÌÁî
-#define HTsize 100 // HT »çÀÌÁî
+#define STsize 1000 // ST ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define HTsize 100 // HT ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 #define FALSE 0
 #define TRUE 1
 
@@ -43,12 +44,12 @@
 
 typedef struct HTentry* HTpointer;
 typedef struct HTentry {
-    int index; // ST¾È¿¡ ÀÖ´Â identifierÀÇ ÀÎµ¦½º
-    HTpointer next; // ´ÙÀ½ identifier¸¦ °¡¸®Å°´Â Æ÷ÀÎÅÍ
+    int index; // STï¿½È¿ï¿½ ï¿½Ö´ï¿½ identifierï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½
+    HTpointer next; // ï¿½ï¿½ï¿½ï¿½ identifierï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 }HTentry;
 
-enum errorTypes { noerror, illsp, illid, overst, toolong }; // ¿¡·¯X, Àß¸øµÈ °ø¹é, Àß¸øµÈ ½Äº°ÀÚ, ½ºÅÃ¿À¹öÇÃ·Î¿ì, ³Ê¹«±ä ½Äº°ÀÚ
+enum errorTypes { noerror, illsp, illid, overst, toolong }; // ï¿½ï¿½ï¿½ï¿½X, ï¿½ß¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ß¸ï¿½ï¿½ï¿½ ï¿½Äºï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½Ã·Î¿ï¿½, ï¿½Ê¹ï¿½ï¿½ï¿½ ï¿½Äºï¿½ï¿½ï¿½
 typedef enum errorTypes ERRORtypes;
 
 char seperators[] = ".,;:?!\t\n ";
@@ -57,26 +58,26 @@ HTpointer HT[HTsize];
 
 char ST[STsize];
 
-int nextid = 0; // ÇöÀç identifier
-int nextfree = 0; // ST¿¡¼­ ´ÙÀ½ ÀÎµ¦½º¸¦ °¡¸®Å°´Â identifier
-int hashcode; // identifierÀÇ hashcode
-int sameid; // Áßº¹µÈ identifier
+int nextid = 0; // ï¿½ï¿½ï¿½ï¿½ identifier
+int nextfree = 0; // STï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å°ï¿½ï¿½ identifier
+int hashcode; // identifierï¿½ï¿½ hashcode
+int sameid; // ï¿½ßºï¿½ï¿½ï¿½ identifier
 
-int found; // ÀÌ¹Ì Á¸ÀçÇÏ´Â ½Äº°ÀÚ°¡ ÀÖ´ÂÁö Ã£´Â º¯¼ö
+int found; // ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Äºï¿½ï¿½Ú°ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 ERRORtypes err;
 
-FILE* fp; //ÆÄÀÏ Æ÷ÀÎÅÍ
+FILE* fp; //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 int input;
 
-//Initialize - ÆÄÀÏ ¿­±â, ÇÑ ±ÛÀÚ ÀÐ±â
+//Initialize - ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ð±ï¿½
 void initialize() {
     fp = fopen(FILE_NAME, "r");
     input = fgetc(fp);
 }
 
 
-//isSeperator - ±¸ºÐÀÚÀÎÁö ±¸º°
+//isSeperator - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 int isSeperator(char c) {
     int i;
     int sep_len;
@@ -104,7 +105,7 @@ void PrintHeading()
 }
 
 
-// PrintHStable - hash table Ãâ·Â
+// PrintHStable - hash table ï¿½ï¿½ï¿½
 void PrintHStable()
 {
     int i, j;
@@ -131,17 +132,17 @@ void PrintHStable()
     printf("\n\n\n < %5d characters are used in the string table > \n ", nextfree);
 
     printf("===========================================================\n");
-    printf("8Á¶: ÄÄÆÄÀÏ·¯ °úÁ¦ 1\n");
-    printf("2071020 ±èÇö¹Î\n");
-    printf("2076020 ÁÖ¼Ò¿¬\n");
-    printf("2076405 Ã¤¹ÎÁÖ\n");
-    printf("2176100 ±èÁö¿ø\n");
+    printf("8ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ ï¿½ï¿½ï¿½ï¿½ 1\n");
+    printf("2071020 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n");
+    printf("2076020 ï¿½Ö¼Ò¿ï¿½\n");
+    printf("2076405 Ã¤ï¿½ï¿½ï¿½ï¿½\n");
+    printf("2176100 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\n");
     printf("===========================================================\n");
 
 }
 
 
-//PrintError - ¿¡·¯ ¸Þ¼¼Áö Ãâ·Â
+//PrintError - ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 void PrintError(ERRORtypes err) {
     switch (err) {
     case overst:
@@ -152,17 +153,17 @@ void PrintError(ERRORtypes err) {
     case illsp:
         printf("...Error...    ");
 
-        //¿À·ù¸¦ ³ª°Ô ÇÑ illsp
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ illsp
         char tmp = input;
 
-        //ÀÌÀü¿¡ ST¿¡ ÀúÀåÇØµÐ charÃâ·Â (illsp¿Í °°Àº identifier¿¡ ¼ÓÇÔ)
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ STï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½ charï¿½ï¿½ï¿½ (illspï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ identifierï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
         for (int i = nextid; i < nextfree; i++)
             printf("%c", ST[i]);
 
-        //illspÃâ·Â
+        //illspï¿½ï¿½ï¿½
         printf("%c", tmp);
 
-        //ÀÌÈÄ seperator°¡ ³ª¿Ã ¶§ ±îÁö charÃâ·Â (illsp¿Í °°Àº identifier¿¡ ¼ÓÇÔ)
+        //ï¿½ï¿½ï¿½ï¿½ seperatorï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ charï¿½ï¿½ï¿½ (illspï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ identifierï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
         input = fgetc(fp);
 
         while (input != EOF && (isLetter(input) || isDigit(input)) || !isSeperator(input)) {
@@ -192,13 +193,13 @@ void PrintError(ERRORtypes err) {
 }
 
 /* SkipSeperators
-*  ´ÙÀ½ identifier¸¦ ÀÐÀ» ¶§, ¹®ÀÚ³ª ¼ýÀÚ°¡ ³ª¿À±â Àü ³ª¿À´Â seperator skip
-*  illsp°¡ ³ª¿ÔÀ» ½Ã ¿À·ùÃâ·Â
+*  ï¿½ï¿½ï¿½ï¿½ identifierï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½, ï¿½ï¿½ï¿½Ú³ï¿½ ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ seperator skip
+*  illspï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 */
 void SkipSeperators() {
 
-    while (input != EOF && !(isLetter(input) || isDigit(input))) { //¹®ÀÚX, ¼ýÀÚX, ¸¶Áö¸· ±ÛÀÚX
-        if (!isSeperator(input)) { // Á¤ÀÇÇØµÐ ±¸ºÐÀÚ¿¡ ¼ÓÇÏÁö ¾Ê´Â´Ù¸é
+    while (input != EOF && !(isLetter(input) || isDigit(input))) { //ï¿½ï¿½ï¿½ï¿½X, ï¿½ï¿½ï¿½ï¿½X, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½X
+        if (!isSeperator(input)) { // ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ú¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´Ù¸ï¿½
             err = illsp;
             nextid = nextfree;
             PrintError(err);
@@ -218,21 +219,21 @@ void SkipSeperators() {
 }
 
 /* ReadID
-seperator°¡ ¾Æ´Ñ ¹®ÀÚµéÀ» ÀÐ¾î¼­ ST¿¡ ÀúÀåÇÑ´Ù.
-ÀÌ¶§ Ã¹±ÛÀÚ°¡ ¼ýÀÚÀÌ¸é ¿À·ù Ãâ·Â
-ÀÐÀ¸¸é¼­ illsp°¡ ³ª¿À¸é ¿À·ù Ãâ·Â
+seperatorï¿½ï¿½ ï¿½Æ´ï¿½ ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½ ï¿½Ð¾î¼­ STï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
+ï¿½Ì¶ï¿½ Ã¹ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½é¼­ illspï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
 */
 int longcnt = 0;
 void ReadID() {
 
     nextid = nextfree;
-    if (isDigit(input)) { // Ã¹±ÛÀÚ°¡ ¼ýÀÚ¸é
+    if (isDigit(input)) { // Ã¹ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½ï¿½ï¿½Ú¸ï¿½
         err = illid;
         PrintError(err);
     }
     else {
-        // ST ¸¸µé±â (ÇÑ ¹®ÀÚ ³Ö±â)
-        // ¿Ã¹Ù¸¥ ½Äº°ÀÚÀÏ ¶§ 
+        // ST ï¿½ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö±ï¿½)
+        // ï¿½Ã¹Ù¸ï¿½ ï¿½Äºï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ 
         while (input != EOF && (isLetter(input) || isDigit(input) || !isSeperator(input))) {
             if (nextfree == STsize) {
                 err = overst;
@@ -240,7 +241,7 @@ void ReadID() {
 
             }
 
-            // ¿Ã¹Ù¸¥ ½Äº°ÀÚ ¾È¿¡ ºÒ¹ý±¸ºÐÀÚ°¡ ÀÖ´Ù¸é
+            // ï¿½Ã¹Ù¸ï¿½ ï¿½Äºï¿½ï¿½ï¿½ ï¿½È¿ï¿½ ï¿½Ò¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½Ö´Ù¸ï¿½
             if (!isLetter(input) && !isDigit(input)) {
                 err = illsp;
                 PrintError(err);
@@ -251,8 +252,8 @@ void ReadID() {
 
             longcnt++;
 
-            ST[nextfree++] = input; // ST¿¡ »ðÀÔ
-            input = fgetc(fp); // ÆÄÀÏÆ÷ÀÎÅÍ°¡ °¡¸®Å°´Â ¹®ÀÚ¸¦ °¡Á®¿È
+            ST[nextfree++] = input; // STï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+            input = fgetc(fp); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í°ï¿½ ï¿½ï¿½ï¿½ï¿½Å°ï¿½ï¿½ ï¿½ï¿½ï¿½Ú¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
         }
     }
@@ -261,7 +262,7 @@ void ReadID() {
 }
 
 /*ComputeHS
-½Äº°ÀÚÀÇ hascode = ¸ðµç charactersÀÇ ¾Æ½ºÅ° °ª mod HT»çÀÌÁî
+ï¿½Äºï¿½ï¿½ï¿½ï¿½ï¿½ hascode = ï¿½ï¿½ï¿½ charactersï¿½ï¿½ ï¿½Æ½ï¿½Å° ï¿½ï¿½ mod HTï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 */
 void ComputeHS(int nid, int nfree)
 {
@@ -275,8 +276,8 @@ void ComputeHS(int nid, int nfree)
 
 /*
 LookupHS
-°¢ identifer¿¡ ´ëÇØ, HT¿¡ ÀÌ¹Ì ÀÖ´ÂÁö È®ÀÎ
-ÀÌ¹Ì ÀÖ´Ù¸é found¸¦ true·Î ÃÊ±âÈ­ / ¾ø´Ù¸é false·Î ÃÊ±âÈ­
+ï¿½ï¿½ identiferï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, HTï¿½ï¿½ ï¿½Ì¹ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ È®ï¿½ï¿½
+ï¿½Ì¹ï¿½ ï¿½Ö´Ù¸ï¿½ foundï¿½ï¿½ trueï¿½ï¿½ ï¿½Ê±ï¿½È­ / ï¿½ï¿½ï¿½Ù¸ï¿½ falseï¿½ï¿½ ï¿½Ê±ï¿½È­
 */
 void LookupHS(int nid, int hscode)
 {
@@ -284,7 +285,7 @@ void LookupHS(int nid, int hscode)
     int i, j;
     found = FALSE;
 
-    //ºñ¾îÀÖÁö ¾ÊÀ¸¸é
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     if (HT[hscode] != NULL) {
         here = HT[hscode];
         while (here != NULL && found == FALSE) {
@@ -309,57 +310,57 @@ void LookupHS(int nid, int hscode)
 
 /*
 ADDHT
-»õ·Î¿î identifier¸¦ hash table¿¡ ³Ö´Â´Ù.
-ht[hashcode]¸®½ºÆ®°¡ ºñ¾îÀÖ´Ù¸é, ÇØ´ç identifierÀÇ ST¿¡¼­ starting index¸¦ °ªÀ¸·Î ³Ö¾îÁÖ°í
-¸®½ºÆ®°¡ ºñ¾îÀÖÁö¾ÊÀ¸¸é ¸®½ºÆ® ¸Ç ¾Õ¿¡ ÇØ´ç identifierÀÇ ST¿¡¼­ starting index¸¦ °ªÀ¸·Î ³Ö¾îÁØ´Ù.
+ï¿½ï¿½ï¿½Î¿ï¿½ identifierï¿½ï¿½ hash tableï¿½ï¿½ ï¿½Ö´Â´ï¿½.
+ht[hashcode]ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ö´Ù¸ï¿½, ï¿½Ø´ï¿½ identifierï¿½ï¿½ STï¿½ï¿½ï¿½ï¿½ starting indexï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½Ö°ï¿½
+ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ ï¿½Õ¿ï¿½ ï¿½Ø´ï¿½ identifierï¿½ï¿½ STï¿½ï¿½ï¿½ï¿½ starting indexï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½Ø´ï¿½.
 */
 void ADDHT(int hscode)
 {
     HTpointer ptr;
 
     ptr = (HTpointer*)malloc(sizeof(ptr));
-    ptr->index = nextid; // ÇöÀç ¹®ÀÚÀÇ ½ÃÀÛ ÀÎµ¦½º 
-    ptr->next = HT[hscode]; // ´ÙÀ½ ¹öÅ¶
-    HT[hscode] = ptr; // ¿¬°á¸®½ºÆ®ÀÇ ¸Ç ¾ÕÀ» °¡¸®Å´
+    ptr->index = nextid; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½ 
+    ptr->next = HT[hscode]; // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¶
+    HT[hscode] = ptr; // ï¿½ï¿½ï¿½á¸®ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å´
 }
 
 
 
 /*
 MAIN
-    ÆÄÀÏ¿¡¼­ identifier ÇÏ³ª¸¦ ÇÑ±ÛÀÚ¾¿ ÀÐ¾î ST¿¡ »ðÀÔ
-    ÇØ´ç identifierÀÇ hashcode°ªÀ» °è»ê
-    HT[hashcode]¿¡ identifier°¡ ÀÌ¹Ì ÀÖ´ÂÁö È®ÀÎ
-        ÀÖÀ¸¸é, ÇöÀç ÀÐÀº identifier¸¦ ST¿¡¼­ ¼ÒÇÁÆ® »èÁ¦
-        ¾ÆÁ÷ ¾øÀ¸¸é, HT[hashcode]ÀÇ index¿¡ identifierÀÇ ST¿¡¼­ÀÇ Ã¹ ÀÎµ¦½º °ªÀ» »ðÀÔ
-    identifierÀÇ ST¿¡¼­ ÀÎµ¦½º, identifier, (entered) ¶Ç´Â  (already existed) Ãâ·Â
-    ÆÄÀÏ ´Ù ÀÐÀº ÈÄ hashtable°ú ST¿¡ µé¾îÀÖ´Â ¹®ÀÚ ¼ö Ãâ·Â
+    ï¿½ï¿½ï¿½Ï¿ï¿½ï¿½ï¿½ identifier ï¿½Ï³ï¿½ï¿½ï¿½ ï¿½Ñ±ï¿½ï¿½Ú¾ï¿½ ï¿½Ð¾ï¿½ STï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    ï¿½Ø´ï¿½ identifierï¿½ï¿½ hashcodeï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+    HT[hashcode]ï¿½ï¿½ identifierï¿½ï¿½ ï¿½Ì¹ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ È®ï¿½ï¿½
+        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ identifierï¿½ï¿½ STï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½
+        ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, HT[hashcode]ï¿½ï¿½ indexï¿½ï¿½ identifierï¿½ï¿½ STï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Ã¹ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    identifierï¿½ï¿½ STï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½, identifier, (entered) ï¿½Ç´ï¿½  (already existed) ï¿½ï¿½ï¿½
+    ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ hashtableï¿½ï¿½ STï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½
 */
 int main()
 {
     int i;
-    PrintHeading(); // headerÇÁ¸°ÆÃ
-    initialize(); //ÆÄÀÏ ÀÐ±â
+    PrintHeading(); // headerï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    initialize(); //ï¿½ï¿½ï¿½ï¿½ ï¿½Ð±ï¿½
 
 
     while (input != EOF) {
         err = noerror;
         SkipSeperators();
-        ReadID(); //ÇÏ³ªÀÇ identifier¸¦ ÀÐÀº ÈÄ
+        ReadID(); //ï¿½Ï³ï¿½ï¿½ï¿½ identifierï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
 
 
-        // ÆÄÀÏÀÇ ¸¶Áö¸· ±ÛÀÚ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (input == EOF) {
             ST[nextfree++] = '\0';
 
-            if (!found) { // ¾ÆÁ÷ °°Àº identifier¸¦ HT¿¡ ³ÖÀº Àû ¾øÀ» ¶§
+            if (!found) { // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ identifierï¿½ï¿½ HTï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
                 printf("%6d		", nextid);
                 for (i = nextid; i < nextfree - 1; i++)
                     printf("%c", ST[i]);
                 printf("		(entered)\n");
                 ADDHT(hashcode);
             }
-            else { // ÀÌ¹Ì °°Àº identifier°¡ Á¸ÀçÇÒ ¶§
+            else { // ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ identifierï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
                 printf("%6d		", sameid);
                 for (i = nextid; i < nextfree - 1; i++)
                     printf("%c", ST[i]);
@@ -370,7 +371,7 @@ int main()
         }
 
 
-        // ÇÑ identifier ÀÐ°í ³­ ÈÄ ±¸ºÐÀÚÈÄº¸
+        // ï¿½ï¿½ identifier ï¿½Ð°ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äºï¿½
         if (input != EOF && err != illid && err != illsp) {
 
             if (!isSeperator(input)) {
@@ -384,7 +385,7 @@ int main()
                 PrintError(err);
             }
 
-            ST[nextfree++] = '\0'; //ÇÑ identifier ³¡
+            ST[nextfree++] = '\0'; //ï¿½ï¿½ identifier ï¿½ï¿½
 
 
             if (longcnt > 12) {
@@ -396,24 +397,24 @@ int main()
             longcnt = 0;
 
 
-            // ¿¡·¯°¡ ¾ø´Ù¸é
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ù¸ï¿½
             if (err == noerror) {
                 ComputeHS(nextid, nextfree); // ('A', ' ')
                 LookupHS(nextid, hashcode);
 
-                if (!found) { // ¾ÆÁ÷ °°Àº identifier¸¦ HT¿¡ ³ÖÀº Àû ¾øÀ» ¶§
+                if (!found) { // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ identifierï¿½ï¿½ HTï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
                     printf("%6d		", nextid);
                     for (i = nextid; i < nextfree - 1; i++)
                         printf("%c", ST[i]);
                     printf("		(entered)\n");
                     ADDHT(hashcode);
                 }
-                else { // ÀÌ¹Ì °°Àº identifier°¡ ÀÖÀ» ¶§
+                else { // ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ identifierï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
                     printf("%6d		", sameid);
                     for (i = nextid; i < nextfree - 1; i++)
                         printf("%c", ST[i]);
                     printf("		(already existed)\n");
-                    nextfree = nextid; //ÀÌ¹ø¿¡ ST¿¡ ÀÐÀº identifier¸¦ ´ÙÀ½¿¡ µ¤¾î¾¸
+                    nextfree = nextid; //ï¿½Ì¹ï¿½ï¿½ï¿½ STï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ identifierï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½î¾¸
                 }
             }
         }
