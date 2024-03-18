@@ -4,7 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define FILE_NAME "testdata1.txt"
+#define FILE_NAME "E:/gitThings/Compiler_2024/compiler1/testdataerror1.txt"
 #define STsize 1000 //ST 사이즈
 #define HTsize 100 //HT 사이즈
 #define FALSE 0
@@ -22,17 +22,20 @@ typedef struct HTentry {
 enum errorTypes { noerror, illsp, illid, overst}; // 에러X, 잘못된 공백, 잘못된 식별자, ST overflow
 typedef enum errorTypes ERRORtypes;
 
+ERRORtypes err;
+
 char separators[] = ".,;:?!\t\n";
 
 HTpointer HT[HTsize]; //hash table
 char ST[STsize];
-ERRORtypes err;
 
 FILE* fp; //file pointer
 char input;
 
 int nextid;
 int nextfree;
+int hashcode;
+int sameid;
 
 /*FILE_NAME 파일을 찾아서 첫번째 문자를 가져온다.*/
 void initialize()
@@ -41,7 +44,7 @@ void initialize()
 	input = fgetc(fp); //첫 문자
 }
 
-void SkipSeparators()
+int SkipSeparators()
 {
 	for (int i = 0; i < strlen(separators); i++) {
 		if (input == separators[i]) {
@@ -53,17 +56,21 @@ void SkipSeparators()
 
 void ReadID()
 {
-	//한 자를 받는다.
-		// identifier 중인지 아닌지 설정
-			//현재 nextid=/=nextfree라면 : identifier 상태에 있다면
-				//isLetter인가? 
-					//	ST[nextfree]에 넣고
-					//	nextfree ++
-					//	continue
-				// 아닐 시 separater인가?
-					//	nextfree ++
-				// 아닐 시 illid
-					//	nextfree ++
+	// identifier 중인지 아닌지 설정//한 자를 받는다.
+	if (nextid != nextfree) {//현재 nextid=/=nextfree라면 : identifier 상태에 있다면
+		else if (isLetter(input)||isDigit(input) {//isLetter인가? 
+			ST[nextfree++]=input;//	ST[nextfree]에 넣고 nextfree ++
+			continue;//	continue
+		}
+		if (!SkipSeparators()) {// 아닐 시 separater인가?
+			nextid=++nextfree;
+		}
+		else {// 아닐 시 illid
+			err=illid;//	nextfree ++
+		}
+	}
+	else {
+	}
 			//현재 nextid==nextfree라면: identifier 상태가 아니라면
 				//isLetter인가?
 					//nextfree
@@ -82,5 +89,6 @@ int main()
 	while (input != EOF) {
 					
 	}
-
+	//Index in ST, Identifier, 설정 보내고
+	//
 }
